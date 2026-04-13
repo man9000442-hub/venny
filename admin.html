@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h2>لوحة تحكم المتجر</h2>
+    </header>
+
+    <div class="container">
+        <!-- شاشة تسجيل الدخول -->
+        <div class="admin-login" id="login-screen">
+            <h3>أدخل كلمة المرور</h3>
+            <input type="password" id="admin-pass" placeholder="كلمة المرور...">
+            <button style="background: #333;" onclick="checkPassword()">دخول</button>
+        </div>
+
+        <!-- لوحة التحكم (مخفية) -->
+        <div class="admin-panel" id="admin-panel">
+            
+            <div class="admin-form">
+                <h3>إضافة منتج جديد</h3>
+                <input type="text" id="p-name" placeholder="اسم المنتج (مثال: Wallet Chain)">
+                <input type="number" id="p-price" placeholder="السعر بالجنيه">
+                <input type="number" id="p-qty" placeholder="الكمية المتاحة">
+                <input type="text" id="p-image" placeholder="رابط صورة المنتج (أو اسم الملف إذا كان معك في نفس المجلد)">
+                <select id="p-offer">
+                    <option value="false">بدون عرض</option>
+                    <option value="true">تفعيل كعرض خاص</option>
+                </select>
+                <button style="background: #333;" onclick="addProduct()">إضافة المنتج</button>
+            </div>
+
+            <h3>المنتجات الحالية</h3>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>السعر</th>
+                            <th>الكمية</th>
+                            <th>العرض</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-table">
+                        <!-- سيتم تحميل المنتجات هنا -->
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <a href="index.html" target="_blank">>> عرض المتجر كعميل</a>
+        </div>
+    </div>
+
+    <script>
+        // كلمة المرور الثابتة (يمكنك تغييرها من هنا)
+        const ADMIN_PASSWORD = "123"; 
+
+        // تسجيل الدخول
+        function checkPassword() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                renderAdminTable();
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        // جلب وحفظ البيانات
+        function getProducts() {
+            return JSON.parse(localStorage.getItem('store_products')) || [];
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('store_products', JSON.stringify(products));
+            renderAdminTable();
+        }
+
+        // إضافة منتج
+        function addProduct() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const qty = document.getElementById('p-qty').value;
+            const image = document.getElementById('p-image').value;
+            const offer = document.getElementById('p-offer').value === 'true';
+
+            if(!name || !price || !qty) {
+                alert("يرجى إدخال اسم المنتج، السعر والكمية!");
+                return;
+            }
+
+            const products = getProducts();
+            products.push({ id: Date.now(), name, price, quantity: qty, image, offer });
+            saveProducts(products);
+
+            // تفريغ الحقول
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-qty').value = '';
+            document.getElementById('p-image').value = '';
+        }
+
+        // تحديث الكمية
+        function updateQty(id) {
+            const newQty = prompt("أدخل الكمية الجديدة المتاحة:");
+            if (newQty !== null && !isNaN(newQty)) {
+                let products = getProducts();
+                products = products.map(p => p.id === id ? { ...p, quantity: parseInt(newQty) } : p);
+                saveProducts(products);
+            }
+        }
+
+        // تفعيل/إلغاء العرض
+        function toggleOffer(id) {
+            let products = getProducts();
+            products = products.map(p => p.id === id ? { ...p, offer: !p.offer } : p);
+            saveProducts(products);
+        }
+
+        // حذف منتج
+        function deleteProduct(id) {
+            if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                let products = getProducts();
+                products = products.filter(p => p.id !== id);
+                saveProducts(products);
+            }
+        }
+
+        // عرض جدول المنتجات
+        function renderAdminTable() {
+            const products = getProducts();
+            const tbody = document.getElementById('admin-products-table');
+            tbody.innerHTML = '';
+
+            products.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${p.image}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;" onerror="this.src='https://via.placeholder.com/50'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.price} ج.م</td>
+                    <td>${p.quantity}</td>
+                    <td>${p.offer ? '✅ مفعل' : '❌ لا'}</td>
+                    <td>
+                        <button class="action-btn" onclick="updateQty(${p.id})">تعديل الكمية</button>
+                        <button class="action-btn" style="background:#f39c12;" onclick="toggleOffer(${p.id})">تغيير العرض</button>
+                        <button class="action-btn delete-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
