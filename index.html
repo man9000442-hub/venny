@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر الإكسسوارات</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <!-- ضع اسم ملف اللوجو الخاص بك هنا بدلاً من logo.png -->
+        <img src="logo.png" alt="شعار المتجر" onerror="this.src='https://via.placeholder.com/150x50?text=Logo'">
+        <h1>أفضل الإكسسوارات والسلاسل</h1>
+    </header>
+
+    <div class="container">
+        <div class="products-grid" id="products-container">
+            <!-- سيتم تحميل المنتجات هنا عبر الجافاسكربت -->
+        </div>
+    </div>
+
+    <script>
+        // رقم الواتساب الخاص بك (يجب أن يبدأ بكود الدولة بدون +)
+        const whatsappNumber = "201000000000"; 
+
+        // جلب المنتجات من التخزين المحلي
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('store_products')) || [];
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            if (products.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">لا توجد منتجات حالياً.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const isAvailable = parseInt(product.quantity) > 0;
+                
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    ${product.offer ? '<div class="offer-badge">عرض خاص!</div>' : ''}
+                    <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200'">
+                    <h3>${product.name}</h3>
+                    <div class="price">${product.price} ج.م</div>
+                    <p>الكمية المتاحة: ${product.quantity}</p>
+                    <button 
+                        class="${isAvailable ? '' : 'disabled'}" 
+                        ${isAvailable ? `onclick="buyProduct('${product.name}', '${product.price}')"` : 'disabled'}
+                    >
+                        ${isAvailable ? 'شراء عبر واتساب 💬' : 'نفذت الكمية'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // دالة تحويل العميل للواتساب
+        function buyProduct(name, price) {
+            const message = `مرحباً، أود طلب هذا المنتج:\n- المنتج: ${name}\n- السعر: ${price} ج.م\nهل هو متوفر؟`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        }
+
+        // تحميل المنتجات عند فتح الصفحة
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>
