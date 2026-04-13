@@ -3,183 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر إكسسوارات روك</title>
+    <title>VENNY Accessories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* CSS Styling */
+        /* إعدادات الألوان المستوحاة من اللوجو */
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --bg-color: #f9f9f9;
-            --text-color: #333;
+            --bg-dark: #05000a;
+            --card-bg: rgba(25, 10, 40, 0.6);
+            --primary-purple: #8a2be2;
+            --neon-pink: #ff007f;
+            --neon-orange: #ff7300;
+            --text-light: #ffffff;
+            --text-gray: #b3a8c4;
+            --glow-purple: 0 0 15px rgba(138, 43, 226, 0.6);
+            --glow-pink: 0 0 15px rgba(255, 0, 127, 0.6);
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #2a0845 0%, var(--bg-dark) 70%);
+            color: var(--text-light);
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
+
+        /* الهيدر واللوجو */
         header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--primary-purple);
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--glow-purple);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        header h1 { margin: 0; }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            /* تدرج لوني مشابه للوجو */
+            background: linear-gradient(to right, var(--primary-purple), var(--neon-pink), var(--neon-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 20px rgba(255, 0, 127, 0.4);
+        }
+
         .admin-btn {
             background: transparent;
-            color: white;
-            border: 1px solid white;
-            padding: 5px 15px;
+            color: var(--neon-pink);
+            border: 1px solid var(--neon-pink);
+            padding: 8px 20px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 25px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            transition: 0.3s;
         }
-        .container { padding: 2rem; }
-        
-        /* Product Grid */
+
+        .admin-btn:hover {
+            background: var(--neon-pink);
+            color: white;
+            box-shadow: var(--glow-pink);
+        }
+
+        .container { padding: 3rem 2rem; }
+
+        /* شبكة المنتجات */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
         }
+
+        /* كارت المنتج */
         .product-card {
-            background: white;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
             padding: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-align: center;
             position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
         }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow-purple);
+            border-color: var(--primary-purple);
+        }
+
         .product-card img {
             width: 100%;
-            height: 200px;
+            height: 250px;
             object-fit: cover;
-            border-radius: 5px;
+            border-radius: 10px;
+            border-bottom: 2px solid var(--neon-pink);
         }
-        .price { color: var(--accent-color); font-weight: bold; font-size: 1.2rem; }
-        .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
+
+        .product-card h3 {
+            margin: 15px 0 5px;
+            font-size: 1.3rem;
+            color: var(--text-light);
+        }
+
+        .price-container { margin-bottom: 15px; }
+        
+        .price { 
+            color: var(--neon-orange); 
+            font-weight: 900; 
+            font-size: 1.4rem; 
+        }
+        
+        .old-price { 
+            text-decoration: line-through; 
+            color: var(--text-gray); 
+            font-size: 1rem; 
+            margin-left: 10px;
+        }
+
         .buy-btn {
-            background-color: #25D366; /* WhatsApp Green */
+            background: linear-gradient(45deg, var(--primary-purple), var(--neon-pink));
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             width: 100%;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
+            border-radius: 8px;
+            font-size: 1.1rem;
             font-weight: bold;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
-        .buy-btn:hover { background-color: #128C7E; }
-        
-        /* Admin Section */
+
+        .buy-btn:hover {
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-orange));
+            box-shadow: var(--glow-pink);
+        }
+
+        /* لوحة التحكم */
         #admin-section {
             display: none;
-            background: white;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-            border: 2px solid var(--primary-color);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            border: 1px solid var(--neon-pink);
+            box-shadow: var(--glow-pink);
         }
+
+        #admin-section h2 { color: var(--neon-pink); margin-top: 0; }
+
         .form-group { margin-bottom: 15px; }
+        .form-group label { color: var(--text-gray); display: block; margin-bottom: 5px; }
+        
         .form-group input {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--primary-purple);
+            color: white;
+            border-radius: 5px;
             box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
         }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 5px var(--neon-pink);
+        }
+
         .save-btn {
-            background: var(--primary-color);
+            background: var(--primary-purple);
             color: white;
             border: none;
             padding: 10px 20px;
             cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            margin-left: 10px;
         }
+
         .stock-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--primary-color);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            top: 25px;
+            right: 25px;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--neon-orange);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--neon-orange);
         }
-        .out-of-stock { opacity: 0.6; }
-        .out-of-stock .buy-btn { background: #ccc; cursor: not-allowed; }
+
+        .out-of-stock { opacity: 0.5; filter: grayscale(80%); }
+        .out-of-stock .buy-btn { background: #333; cursor: not-allowed; box-shadow: none; color: #888;}
     </style>
 </head>
 <body>
 
     <header>
-        <h1>⛓️ متجر ڤاندال للإكسسوارات</h1>
-        <button class="admin-btn" onclick="askPassword()">لوحة التحكم</button>
+        <h1 class="logo-text">VENNY</h1>
+        <button class="admin-btn" onclick="askPassword()">لوحة الإدارة</button>
     </header>
 
     <div class="container">
         <div id="admin-section">
-            <h2>لوحة تحكم المتجر (الإدارة)</h2>
+            <h2>⚙️ إدارة المتجر</h2>
             <div class="form-group">
                 <label>اسم المنتج:</label>
-                <input type="text" id="p-name" placeholder="مثال: سلسلة فضة رجالي">
+                <input type="text" id="p-name" placeholder="مثال: سلسلة VENNY الكلاسيكية">
             </div>
             <div class="form-group">
-                <label>السعر (بالجنيه):</label>
-                <input type="number" id="p-price" placeholder="مثال: 250">
+                <label>السعر الأساسي (ج.م):</label>
+                <input type="number" id="p-price" placeholder="مثال: 450">
             </div>
             <div class="form-group">
-                <label>سعر العرض (اتركه فارغاً إن لم يوجد):</label>
-                <input type="number" id="p-offer" placeholder="مثال: 200">
+                <label>سعر العرض (اختياري):</label>
+                <input type="number" id="p-offer" placeholder="مثال: 399">
             </div>
             <div class="form-group">
                 <label>الكمية المتاحة:</label>
-                <input type="number" id="p-qty" placeholder="مثال: 10">
+                <input type="number" id="p-qty" placeholder="مثال: 15">
             </div>
             <div class="form-group">
                 <label>رابط الصورة:</label>
-                <input type="text" id="p-img" placeholder="رابط صورة المنتج">
+                <input type="text" id="p-img" placeholder="ضع رابط الصورة هنا">
             </div>
-            <button class="save-btn" onclick="addProduct()">إضافة المنتج</button>
-            <button class="save-btn" style="background:#e74c3c;" onclick="clearData()">مسح كل المنتجات</button>
+            <button class="save-btn" onclick="addProduct()">➕ إضافة المنتج</button>
+            <button class="save-btn" style="background: #ff003c;" onclick="clearData()">🗑️ مسح الكل</button>
         </div>
-
-        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
 
         <div class="products-grid" id="products-container">
             </div>
     </div>
 
     <script>
-        // --- إعدادات الإدمن ---
-        const ADMIN_PASSWORD = "admin"; // كلمة المرور الثابتة
-        const WHATSAPP_NUMBER = "201000000000"; // رقم الواتساب الخاص بك (بدون علامة +)
+        const ADMIN_PASSWORD = "venny"; // باسورد الادمن
+        const WHATSAPP_NUMBER = "201000000000"; // حط رقمك هنا
 
-        // بيانات مبدئية إذا كان المتجر فارغاً
         let defaultProducts = [
             {
                 id: 1,
-                name: "Wallet Chain معدن ثقيل",
-                price: 350,
-                offer: 300,
-                qty: 5,
-                img: "https://images.unsplash.com/photo-1596568359550-9c1032bf2857?auto=format&fit=crop&w=300&q=80"
+                name: "VENNY Signature Chain",
+                price: 450,
+                offer: 399,
+                qty: 10,
+                img: "https://images.unsplash.com/photo-1599643478524-fb66f7ca065b?auto=format&fit=crop&w=400&q=80"
             },
             {
                 id: 2,
-                name: "دلاية سيف ستانلس",
-                price: 150,
+                name: "Cyberpunk Wallet Chain",
+                price: 250,
                 offer: null,
-                qty: 0,
-                img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=300&q=80"
+                qty: 5,
+                img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=400&q=80"
             }
         ];
 
-        // جلب المنتجات من الـ LocalStorage أو استخدام المبدئية
-        let products = JSON.parse(localStorage.getItem('myStoreProducts')) || defaultProducts;
+        let products = JSON.parse(localStorage.getItem('vennyProducts')) || defaultProducts;
 
-        // دالة عرض المنتجات
         function renderProducts() {
             const container = document.getElementById('products-container');
             container.innerHTML = '';
@@ -191,15 +288,15 @@
                     : `<span class="price">${product.price} ج.م</span>`;
 
                 let btnHTML = isOutOfStock
-                    ? `<button class="buy-btn" disabled>نفذت الكمية</button>`
-                    : `<button class="buy-btn" onclick="buyOnWhatsApp('${product.name}', ${product.offer || product.price})">🛒 شراء عبر واتساب</button>`;
+                    ? `<button class="buy-btn" disabled>نفذت الكمية 🚫</button>`
+                    : `<button class="buy-btn" onclick="buyOnWhatsApp('${product.name}', ${product.offer || product.price})">اطلب الآن 🔥</button>`;
 
                 const card = `
                     <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}">
-                        <div class="stock-badge">متبقي: ${product.qty}</div>
+                        <div class="stock-badge">${isOutOfStock ? 'نفذت' : 'متاح: ' + product.qty}</div>
                         <img src="${product.img}" alt="${product.name}">
                         <h3>${product.name}</h3>
-                        <p>${priceHTML}</p>
+                        <div class="price-container">${priceHTML}</div>
                         ${btnHTML}
                     </div>
                 `;
@@ -207,33 +304,30 @@
             });
         }
 
-        // دالة التحويل للواتساب
         function buyOnWhatsApp(productName, finalPrice) {
-            const message = `مرحباً، أريد طلب هذا المنتج:%0A- اسم المنتج: ${productName}%0A- السعر: ${finalPrice} جنيه%0Aهل هو متاح؟`;
+            const message = `أهلاً VENNY! 🖤%0Aأنا عايز أطلب:%0A- اسم الأيتم: ${productName}%0A- السعر: ${finalPrice} ج.م%0Aهل لسه متاح؟`;
             const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
             window.open(url, '_blank');
         }
 
-        // دالة إظهار لوحة التحكم
         function askPassword() {
-            const pass = prompt("أدخل كلمة المرور الخاصة بالإدمن:");
+            const pass = prompt("أدخل الرقم السري للوحة الإدارة:");
             if (pass === ADMIN_PASSWORD) {
                 document.getElementById('admin-section').style.display = 'block';
             } else if (pass !== null) {
-                alert("كلمة المرور خاطئة!");
+                alert("الرقم السري غلط!");
             }
         }
 
-        // دالة إضافة منتج جديد من لوحة التحكم
         function addProduct() {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const offer = document.getElementById('p-offer').value;
             const qty = document.getElementById('p-qty').value;
-            const img = document.getElementById('p-img').value || 'https://via.placeholder.com/300?text=No+Image';
+            const img = document.getElementById('p-img').value || 'https://via.placeholder.com/400x400/1a0a2a/ff007f?text=VENNY';
 
             if (!name || !price) {
-                alert("برجاء إدخال اسم المنتج والسعر على الأقل!");
+                alert("لازم تكتب اسم وسعر المنتج!");
                 return;
             }
 
@@ -249,24 +343,24 @@
             products.push(newProduct);
             saveData();
             renderProducts();
-            alert("تم إضافة المنتج بنجاح!");
+            
+            // تفريغ الخانات بعد الإضافة
+            document.querySelectorAll('#admin-section input').forEach(input => input.value = '');
+            alert("عاش! الأيتم نزل في الموقع.");
         }
 
-        // مسح المنتجات
         function clearData() {
-            if(confirm("هل أنت متأكد من مسح جميع المنتجات؟")) {
+            if(confirm("متأكد إنك عايز تمسح كل المنتجات؟")) {
                 products = [];
                 saveData();
                 renderProducts();
             }
         }
 
-        // حفظ البيانات محلياً
         function saveData() {
-            localStorage.setItem('myStoreProducts', JSON.stringify(products));
+            localStorage.setItem('vennyProducts', JSON.stringify(products));
         }
 
-        // تشغيل العرض عند تحميل الصفحة
         renderProducts();
     </script>
 </body>
