@@ -1,71 +1,273 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر الإكسسوارات</title>
-    <link rel="stylesheet" href="style.css">
+    <title>متجر إكسسوارات روك</title>
+    <style>
+        /* CSS Styling */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; }
+        .admin-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .container { padding: 2rem; }
+        
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .price { color: var(--accent-color); font-weight: bold; font-size: 1.2rem; }
+        .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
+        .buy-btn {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .buy-btn:hover { background-color: #128C7E; }
+        
+        /* Admin Section */
+        #admin-section {
+            display: none;
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .save-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        .out-of-stock { opacity: 0.6; }
+        .out-of-stock .buy-btn { background: #ccc; cursor: not-allowed; }
+    </style>
 </head>
 <body>
 
     <header>
-        <!-- ضع اسم ملف اللوجو الخاص بك هنا بدلاً من logo.png -->
-        <img src="logo.png" alt="شعار المتجر" onerror="this.src='https://via.placeholder.com/150x50?text=Logo'">
-        <h1>أفضل الإكسسوارات والسلاسل</h1>
+        <h1>⛓️ متجر ڤاندال للإكسسوارات</h1>
+        <button class="admin-btn" onclick="askPassword()">لوحة التحكم</button>
     </header>
 
     <div class="container">
-        <div class="products-grid" id="products-container">
-            <!-- سيتم تحميل المنتجات هنا عبر الجافاسكربت -->
+        <div id="admin-section">
+            <h2>لوحة تحكم المتجر (الإدارة)</h2>
+            <div class="form-group">
+                <label>اسم المنتج:</label>
+                <input type="text" id="p-name" placeholder="مثال: سلسلة فضة رجالي">
+            </div>
+            <div class="form-group">
+                <label>السعر (بالجنيه):</label>
+                <input type="number" id="p-price" placeholder="مثال: 250">
+            </div>
+            <div class="form-group">
+                <label>سعر العرض (اتركه فارغاً إن لم يوجد):</label>
+                <input type="number" id="p-offer" placeholder="مثال: 200">
+            </div>
+            <div class="form-group">
+                <label>الكمية المتاحة:</label>
+                <input type="number" id="p-qty" placeholder="مثال: 10">
+            </div>
+            <div class="form-group">
+                <label>رابط الصورة:</label>
+                <input type="text" id="p-img" placeholder="رابط صورة المنتج">
+            </div>
+            <button class="save-btn" onclick="addProduct()">إضافة المنتج</button>
+            <button class="save-btn" style="background:#e74c3c;" onclick="clearData()">مسح كل المنتجات</button>
         </div>
+
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <div class="products-grid" id="products-container">
+            </div>
     </div>
 
     <script>
-        // رقم الواتساب الخاص بك (يجب أن يبدأ بكود الدولة بدون +)
-        const whatsappNumber = "201000000000"; 
+        // --- إعدادات الإدمن ---
+        const ADMIN_PASSWORD = "admin"; // كلمة المرور الثابتة
+        const WHATSAPP_NUMBER = "201000000000"; // رقم الواتساب الخاص بك (بدون علامة +)
 
-        // جلب المنتجات من التخزين المحلي
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('store_products')) || [];
+        // بيانات مبدئية إذا كان المتجر فارغاً
+        let defaultProducts = [
+            {
+                id: 1,
+                name: "Wallet Chain معدن ثقيل",
+                price: 350,
+                offer: 300,
+                qty: 5,
+                img: "https://images.unsplash.com/photo-1596568359550-9c1032bf2857?auto=format&fit=crop&w=300&q=80"
+            },
+            {
+                id: 2,
+                name: "دلاية سيف ستانلس",
+                price: 150,
+                offer: null,
+                qty: 0,
+                img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=300&q=80"
+            }
+        ];
+
+        // جلب المنتجات من الـ LocalStorage أو استخدام المبدئية
+        let products = JSON.parse(localStorage.getItem('myStoreProducts')) || defaultProducts;
+
+        // دالة عرض المنتجات
+        function renderProducts() {
             const container = document.getElementById('products-container');
             container.innerHTML = '';
 
-            if (products.length === 0) {
-                container.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">لا توجد منتجات حالياً.</p>';
-                return;
-            }
-
             products.forEach(product => {
-                const isAvailable = parseInt(product.quantity) > 0;
-                
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    ${product.offer ? '<div class="offer-badge">عرض خاص!</div>' : ''}
-                    <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200'">
-                    <h3>${product.name}</h3>
-                    <div class="price">${product.price} ج.م</div>
-                    <p>الكمية المتاحة: ${product.quantity}</p>
-                    <button 
-                        class="${isAvailable ? '' : 'disabled'}" 
-                        ${isAvailable ? `onclick="buyProduct('${product.name}', '${product.price}')"` : 'disabled'}
-                    >
-                        ${isAvailable ? 'شراء عبر واتساب 💬' : 'نفذت الكمية'}
-                    </button>
+                const isOutOfStock = product.qty <= 0;
+                let priceHTML = product.offer 
+                    ? `<span class="old-price">${product.price} ج.م</span> <span class="price">${product.offer} ج.م</span>`
+                    : `<span class="price">${product.price} ج.م</span>`;
+
+                let btnHTML = isOutOfStock
+                    ? `<button class="buy-btn" disabled>نفذت الكمية</button>`
+                    : `<button class="buy-btn" onclick="buyOnWhatsApp('${product.name}', ${product.offer || product.price})">🛒 شراء عبر واتساب</button>`;
+
+                const card = `
+                    <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}">
+                        <div class="stock-badge">متبقي: ${product.qty}</div>
+                        <img src="${product.img}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>${priceHTML}</p>
+                        ${btnHTML}
+                    </div>
                 `;
-                container.appendChild(card);
+                container.innerHTML += card;
             });
         }
 
-        // دالة تحويل العميل للواتساب
-        function buyProduct(name, price) {
-            const message = `مرحباً، أود طلب هذا المنتج:\n- المنتج: ${name}\n- السعر: ${price} ج.م\nهل هو متوفر؟`;
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        // دالة التحويل للواتساب
+        function buyOnWhatsApp(productName, finalPrice) {
+            const message = `مرحباً، أريد طلب هذا المنتج:%0A- اسم المنتج: ${productName}%0A- السعر: ${finalPrice} جنيه%0Aهل هو متاح؟`;
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+            window.open(url, '_blank');
         }
 
-        // تحميل المنتجات عند فتح الصفحة
-        window.onload = loadProducts;
+        // دالة إظهار لوحة التحكم
+        function askPassword() {
+            const pass = prompt("أدخل كلمة المرور الخاصة بالإدمن:");
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('admin-section').style.display = 'block';
+            } else if (pass !== null) {
+                alert("كلمة المرور خاطئة!");
+            }
+        }
+
+        // دالة إضافة منتج جديد من لوحة التحكم
+        function addProduct() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const offer = document.getElementById('p-offer').value;
+            const qty = document.getElementById('p-qty').value;
+            const img = document.getElementById('p-img').value || 'https://via.placeholder.com/300?text=No+Image';
+
+            if (!name || !price) {
+                alert("برجاء إدخال اسم المنتج والسعر على الأقل!");
+                return;
+            }
+
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                price: parseFloat(price),
+                offer: offer ? parseFloat(offer) : null,
+                qty: parseInt(qty) || 0,
+                img: img
+            };
+
+            products.push(newProduct);
+            saveData();
+            renderProducts();
+            alert("تم إضافة المنتج بنجاح!");
+        }
+
+        // مسح المنتجات
+        function clearData() {
+            if(confirm("هل أنت متأكد من مسح جميع المنتجات؟")) {
+                products = [];
+                saveData();
+                renderProducts();
+            }
+        }
+
+        // حفظ البيانات محلياً
+        function saveData() {
+            localStorage.setItem('myStoreProducts', JSON.stringify(products));
+        }
+
+        // تشغيل العرض عند تحميل الصفحة
+        renderProducts();
     </script>
 </body>
 </html>
